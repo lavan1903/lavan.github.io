@@ -1,0 +1,25 @@
+# lavan.github.io
+import requests
+from bs4 import BeautifulSoup
+
+# Define the URL of the page with the EV mileage data
+url = "https://www.fueleconomy.gov/feg/byFuelTypeEPATypeEV.shtml"
+
+# Send a GET request to the URL and get the HTML content
+response = requests.get(url)
+html = response.content
+
+# Parse the HTML using BeautifulSoup
+soup = BeautifulSoup(html, 'html.parser')
+
+# Find the table with the EV mileage data
+table = soup.find('table', attrs={'id': 'sort1'})
+
+# Extract the data from the table rows
+for row in table.findAll('tr'):
+    cols = row.findAll('td')
+    if len(cols) == 3:  # Ignore header rows
+        model = cols[0].text.strip()
+        city_mileage = cols[1].text.strip()
+        highway_mileage = cols[2].text.strip()
+        print(f"{model} - City: {city_mileage} mpg, Highway: {highway_mileage} mpg")
